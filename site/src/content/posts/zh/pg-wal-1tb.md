@@ -15,7 +15,7 @@ category: "DATABASE / INCIDENT REVIEW"
 context: "PostgreSQL 10 · 一主一备 · Flink CDC · 生产故障复盘"
 ---
 
-![蓝天下的 PostgreSQL 大象与 WAL 日志文件，DB PATCH 文章封面](/images/pg-wal-1tb-cover.png)
+![蓝天下的 PostgreSQL 大象与 WAL 日志文件，DB PATCH 文章封面](/images/pg-wal-1tb-cover.webp)
 
 这是一个平静的周五。白天刚做完检查，数据库、主备、磁盘都正常。我已经在等周六了：睡到自然醒，不看告警，最好连电脑都不开。
 
