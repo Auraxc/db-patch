@@ -1,0 +1,6 @@
+---
+import { text, type Locale } from '../lib/i18n';
+import { isDemo } from '../lib/content';
+const { locale } = Astro.props as { locale: Locale };
+---
+<footer class="site-footer"><div class="wrap"><div class="footer-inner"><div class="footer-left"><span class="footer-name">DB PATCH.</span><span>© {new Date().getFullYear()} · {text(locale, '每一次记录，都是一个小小的补丁。', 'One note, one small patch.')}</span></div><span class="small-label">PostgreSQL · Backend · AI</span></div>{isDemo && <p class="prototype-note">{text(locale, '示例预览 · 本模式不供搜索引擎索引；示例文章不会进入正式构建。', 'Demo preview · Not indexed by search engines. Sample posts are excluded from the production build.')}</p>}</div></footer>

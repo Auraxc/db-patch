@@ -1,0 +1,12 @@
+node_modules/
+/public/
+.abdeblog-cache/
+/deploy/
+.DS_Store
+npm-debug.log*
+site/dist/
+site/.astro/
+.env
+.env.*
+!.env.example
+.playwright-mcp/

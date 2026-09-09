@@ -1,0 +1,9 @@
+---
+import type { Post } from '../lib/content';
+import { readingMinutes } from '../lib/content';
+import { pathFor, postUrl, tagName, text } from '../lib/i18n';
+interface Props { post: Post; index?: number }
+const { post, index = 0 } = Astro.props;
+const { data } = post;
+---
+<article class="post-row"><div><div class="post-category">{data.category || tagName(data.tags[0], data.lang)}{data.sample && <span class="sample-label"> · {text(data.lang, '示例', 'SAMPLE')}</span>}</div><h3><a href={postUrl(post)}>{data.title}</a></h3><p>{data.excerpt}</p><div class="meta"><time datetime={data.date}>{data.date.replaceAll('-', '.')}</time><span class="dot"></span><span>{text(data.lang, `约 ${readingMinutes(post)} 分钟`, `${readingMinutes(post)} min read`)}</span>{data.tags.map(tag => <a class="pill" href={pathFor(data.lang, `tags/${tag}`)}># {tagName(tag, data.lang)}</a>)}</div></div><span class="row-mark" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span></article>

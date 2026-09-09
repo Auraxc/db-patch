@@ -1,0 +1,41 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Icon from '../components/Icon.astro';
+import { siteConfig } from '../config';
+import { isDemo } from '../lib/content';
+import { text, feedUrl, type Locale } from '../lib/i18n';
+interface Props { locale: Locale; title: string; description?: string; page: string; alternate?: string; tag?: string; noindex?: boolean; article?: { date: string; updated?: string; tags: string[] } }
+const { locale, title, description = siteConfig.description[locale], page, alternate, tag, noindex = false, article } = Astro.props;
+const canonical = new URL(page === '404' ? '/404.html' : Astro.url.pathname, siteConfig.url).href;
+const absolute = (path: string) => new URL(path, siteConfig.url).href;
+const ld = article ? { '@context': 'https://schema.org', '@type': 'BlogPosting', headline: title, description, url: canonical, mainEntityOfPage: canonical, inLanguage: locale === 'en' ? 'en' : 'zh-CN', datePublished: `${article.date}T00:00:00+08:00`, dateModified: `${article.updated || article.date}T00:00:00+08:00`, author: { '@type': 'Person', name: siteConfig.author.name, url: absolute(locale === 'en' ? '/en/about/' : '/about/') }, keywords: article.tags.join(', ') } : { '@context': 'https://schema.org', '@type': 'WebSite', name: siteConfig.name, description, url: siteConfig.url, inLanguage: locale === 'en' ? 'en' : 'zh-CN' };
+---
+<!doctype html>
+<html lang={locale === 'en' ? 'en' : 'zh-CN'}>
+<head>
+  <meta charset="utf-8" /><script is:inline src="/scripts/theme.js"></script>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{title.includes('DB PATCH') ? title : `${title} — DB PATCH`}</title>
+  <meta name="description" content={description} />
+  {(isDemo || noindex) && <meta name="robots" content="noindex,nofollow" />}
+  <link rel="canonical" href={canonical} />
+  {page !== '404' && <link rel="alternate" hreflang={locale === 'en' ? 'en' : 'zh-CN'} href={canonical} />}
+  {alternate && <link rel="alternate" hreflang={locale === 'en' ? 'zh-CN' : 'en'} href={absolute(alternate)} />}
+  <link rel="alternate" type="application/rss+xml" title={`DB PATCH · ${locale === 'en' ? 'English' : '中文'}${tag ? ` · ${tag}` : ''}`} href={absolute(feedUrl(locale, tag))} />
+  <meta property="og:site_name" content="DB PATCH" /><meta property="og:title" content={title} /><meta property="og:description" content={description} /><meta property="og:url" content={canonical} /><meta property="og:type" content={article ? 'article' : 'website'} /><meta property="og:locale" content={locale === 'en' ? 'en_US' : 'zh_CN'} />
+  {alternate && <meta property="og:locale:alternate" content={locale === 'en' ? 'zh_CN' : 'en_US'} />}
+  <meta name="twitter:card" content="summary" /><meta name="twitter:title" content={title} /><meta name="twitter:description" content={description} />
+  {article && <meta property="article:published_time" content={`${article.date}T00:00:00+08:00`} />}
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/styles/base.css" /><link rel="stylesheet" href="/styles/features.css" /><link rel="stylesheet" href="/styles/theme.css" /><link rel="stylesheet" href="/styles/site.css" />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(ld).replace(/</g, '\\u003c')} />
+  <script is:inline src="/scripts/site.js" defer></script>
+</head>
+<body data-site={siteConfig.url} data-page={page}>
+  <a class="skip" href="#main">{text(locale, '跳至正文', 'Skip to content')}</a>
+  <Header locale={locale} page={page} alternate={alternate} />
+  <slot />
+  <Footer locale={locale} />
+  <dialog id="search-dialog" aria-labelledby="search-title"><div class="dialog-head"><h2 id="search-title">{text(locale, '搜索文章', 'Search articles')}</h2><button class="close-dialog" data-close-dialog aria-label={text(locale, '关闭弹窗', 'Close dialog')}><Icon name="close" /></button></div><div class="dialog-body"><label class="dialog-input"><Icon name="search" /><input type="search" id="search-input" aria-label={text(locale, '搜索文章、正文与标签', 'Search articles, text and tags')} placeholder={text(locale, '搜索文章、关键词或标签…', 'Search articles, keywords or tags…')} autocomplete="off" /></label><div class="search-results" id="search-results"></div><div class="search-helper"><span id="search-count" role="status" aria-live="polite"></span><span>{text(locale, '中文内容 · Esc 关闭', 'English content · Esc to close')}</span></div></div></dialog>
+</body></html>

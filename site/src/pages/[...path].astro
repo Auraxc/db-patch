@@ -1,0 +1,42 @@
+---
+import Base from '../layouts/Base.astro';
+import Home from '../components/Home.astro';
+import Archive from '../components/Archive.astro';
+import Tags from '../components/Tags.astro';
+import About from '../components/About.astro';
+import Subscribe from '../components/Subscribe.astro';
+import Article from '../components/Article.astro';
+import { getPosts, type Post } from '../lib/content';
+import { locales, pathFor, postUrl, tags, tagName, text, type Locale } from '../lib/i18n';
+
+export async function getStaticPaths() {
+  const allPosts = await getPosts();
+  const result = [];
+  for (const locale of locales) {
+    const other = locale === 'zh' ? 'en' : 'zh';
+    const posts = allPosts.filter(p => p.data.lang === locale);
+    for (const [kind, segment] of [['home', ''], ['articles', 'articles'], ['tags', 'tags'], ['about', 'about'], ['subscribe', 'subscribe']]) {
+      result.push({ params: { path: pathFor(locale, segment).slice(1, -1) || undefined }, props: { locale, kind, posts, alternate: pathFor(other, segment) } });
+    }
+    for (const tag of tags) {
+      result.push({ params: { path: pathFor(locale, `tags/${tag.id}`).slice(1, -1) }, props: { locale, kind: 'tag', tag: tag.id, posts, alternate: pathFor(other, `tags/${tag.id}`) } });
+    }
+    for (const post of posts) {
+      const translation = allPosts.find(p => p.data.lang === other && p.data.translationKey === post.data.translationKey);
+      result.push({ params: { path: postUrl(post).slice(1, -1) }, props: { locale, kind: 'post', post, alternate: translation ? postUrl(translation) : undefined } });
+    }
+  }
+  return result;
+}
+interface Props { locale: Locale; kind: string; posts?: Post[]; post?: Post; tag?: string; alternate?: string }
+const { locale, kind, posts = [], post, tag, alternate } = Astro.props;
+const title = kind === 'post' && post ? post.data.title : kind === 'tag' && tag ? `${tagName(tag, locale)} ${text(locale, '文章', 'articles')}` : ({ home: text(locale, 'DB PATCH — 数据库、后端与 AI', 'DB PATCH — Databases, Backend & AI'), articles: text(locale, '所有文章', 'All articles'), tags: text(locale, '标签与主题', 'Tags & topics'), about: text(locale, '关于我与这个小站', 'About me & this site'), subscribe: text(locale, 'RSS 订阅', 'RSS subscriptions') }[kind] || 'DB PATCH');
+---
+<Base locale={locale} title={title} page={kind === 'tag' ? 'tags' : kind} alternate={alternate} tag={tag} description={post?.data.excerpt} article={post ? {date: post.data.date, updated: post.data.updated, tags: post.data.tags} : undefined} noindex={post?.data.sample}>
+  {kind === 'home' && <Home locale={locale} posts={posts} />}
+  {(kind === 'articles' || kind === 'tag') && <Archive locale={locale} posts={posts} tag={tag} />}
+  {kind === 'tags' && <Tags locale={locale} posts={posts} />}
+  {kind === 'about' && <About locale={locale} />}
+  {kind === 'subscribe' && <Subscribe locale={locale} />}
+  {kind === 'post' && post && <Article post={post} alternate={alternate} />}
+</Base>

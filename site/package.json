@@ -1,0 +1,32 @@
+{
+  "name": "db-patch-site",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22.12.0" },
+  "scripts": {
+    "dev": "astro dev --host 127.0.0.1 --port 4321",
+    "check": "astro check",
+    "build": "astro check && astro build && node scripts/finalize.mjs && node scripts/verify.mjs",
+    "build:demo": "DBPATCH_INCLUDE_DEMOS=true npm run build",
+    "preview": "astro preview --host 127.0.0.1 --port 4321",
+    "new": "node scripts/new-post.mjs",
+    "test": "node --test test/*.test.mjs"
+  },
+  "dependencies": {
+    "astro": "7.3.2",
+    "@astrojs/markdown-remark": "7.3.1",
+    "@astrojs/rss": "4.0.19",
+    "@astrojs/sitemap": "3.7.4",
+    "markdown-it": "14.3.1",
+    "sanitize-html": "^2.17.0"
+  },
+  "devDependencies": {
+    "fast-xml-parser": "^5.3.6",
+    "yaml": "^2.8.2",
+    "@astrojs/check": "0.9.10",
+    "@types/markdown-it": "^14.1.2",
+    "@types/sanitize-html": "^2.16.0",
+    "typescript": "^5.9.3"
+  }
+}

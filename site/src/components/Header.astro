@@ -1,0 +1,25 @@
+---
+import Icon from './Icon.astro';
+import { pathFor, text, type Locale } from '../lib/i18n';
+interface Props { locale: Locale; page: string; alternate?: string }
+const { locale, page, alternate } = Astro.props;
+const t = (zh: string, en: string) => text(locale, zh, en);
+const other = locale === 'zh' ? 'en' : 'zh';
+const navigation = [['home', '', t('首页', 'Home')], ['articles', 'articles', t('文章', 'Articles')], ['tags', 'tags', t('标签', 'Tags')], ['about', 'about', t('关于', 'About')]];
+---
+<header class="site-header"><div class="wrap header-inner">
+  <a class="brand" href={pathFor(locale)} aria-label={t('DB PATCH 首页', 'DB PATCH home')}>
+    <span class="brand-symbol"><Icon name="patch" /></span><div><div class="brand-name">DB PATCH<span class="brand-dot">.</span></div><div class="brand-caption">A PERSONAL TECH JOURNAL</div></div>
+  </a>
+  <nav class="main-nav" id="main-nav" aria-label={t('主导航', 'Main navigation')}>
+    {navigation.map(([key, path, label]) => <a href={pathFor(locale, path)} aria-current={page === key || (page === 'post' && key === 'articles') ? 'page' : undefined}>{label}</a>)}
+    <a class="mobile-rss" href={pathFor(locale, 'subscribe')}><Icon name="rss" />{t('RSS 订阅', 'RSS subscriptions')}</a>
+  </nav>
+  <div class="header-actions">
+    <button class="search-trigger" data-search aria-label={t('搜索文章', 'Search articles')} aria-haspopup="dialog"><Icon name="search" /></button>
+    {alternate ? <a class="language-switch" data-language-switch href={alternate} lang={other === 'en' ? 'en' : 'zh-CN'} hreflang={other === 'en' ? 'en' : 'zh-CN'} aria-label={t('Switch to English', '切换至中文')}>{t('EN', '中文')}</a> : <span class="language-switch unavailable" title={t('本文暂无英文版', 'No Chinese translation yet')} aria-label={t('本文暂无英文版', 'No Chinese translation yet')}>{t('EN', '中文')}</span>}
+    <div class="theme-picker"><button class="theme-toggle" data-theme-toggle aria-expanded="false" aria-controls="theme-options" aria-label={t('主题设置', 'Appearance')}><Icon name="cloud" /></button><div class="theme-options" id="theme-options" role="group" aria-label={t('显示主题', 'Color theme')} hidden><button data-theme-choice="system">{t('自动 · 跟随系统', 'Auto · System')}</button><button data-theme-choice="light">{t('日间', 'Light')}</button><button data-theme-choice="dark">{t('夜间', 'Dark')}</button></div></div>
+    <a class="rss-link" href={pathFor(locale, 'subscribe')} aria-label={t('RSS 订阅', 'RSS subscriptions')}><Icon name="rss" /><span>RSS</span></a>
+    <button class="menu-button" aria-label={t('展开导航', 'Open navigation')} aria-expanded="false" aria-controls="main-nav"><Icon name="menu" /></button>
+  </div>
+</div></header>

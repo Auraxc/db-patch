@@ -1,0 +1,22 @@
+---
+import Icon from './Icon.astro';
+import { siteConfig } from '../config';
+import { pathFor, text, type Locale } from '../lib/i18n';
+const { locale } = Astro.props as { locale: Locale };
+const t = (zh: string, en: string) => text(locale, zh, en);
+const groups = [
+  { id: 'code', title: t('代码与项目', 'Code & projects'), icon: 'code' },
+  { id: 'writing', title: t('长文与社区', 'Writing & communities'), icon: 'book' },
+  { id: 'contact', title: t('动态与联系', 'Updates & contact'), icon: 'chat' },
+];
+const platforms = siteConfig.platforms.filter(p => /^(https:\/\/|mailto:)/.test(p.url));
+const wechat = siteConfig.wechat.name && siteConfig.wechat.qrImage.startsWith('/');
+---
+<main id="main" class="wrap"><section class="page-intro"><div class="eyebrow">BEHIND THE PATCH</div><h1>{t('关于我与这个小站', 'About me & this site')}</h1><p>{t('数据库、代码，以及持续记录的习惯。', 'Databases, code, and the habit of keeping notes.')}</p></section><div class="about-layout"><section class="about-main"><h2>{t('你好，我是 DB PATCH。', 'Hello, I’m DB PATCH.')}</h2><p>{t('我做数据库运维和后端开发，主要使用 PostgreSQL，也关注 AI 在工程实践里的可能性。', 'I work in database operations and backend development, mainly with PostgreSQL. I also explore where AI can help in engineering practice.')}</p><p>{t('这个小站用来记录我遇到的问题、尝试过的方法，以及值得继续验证的想法。比起只留下一个结论，我更想把上下文和判断过程保存下来。', 'This site holds the problems I encounter, the approaches I try, and ideas worth testing. I want to keep the context and reasoning, not just the conclusion.')}</p><div class="about-signature">DB PATCH<span class="brand-dot">.</span></div><div class="focus-list">{[
+  [t('PostgreSQL 与数据库运维', 'PostgreSQL & database operations'), t('查询、备份、恢复与复制；关注系统是否可靠，也关注操作是否可验证。', 'Queries, backups, recovery, and replication. Reliable systems and verifiable operations.')],
+  [t('后端工程', 'Backend engineering'), t('从接口到存储，记录性能、边界与工程取舍。', 'From APIs to storage: performance, boundaries, and engineering trade-offs.')],
+  [t('AI 实践', 'Practical AI'), t('尝试工具、检查输出，区分真正验证过的结果与仍待确认的猜想。', 'Trying tools, checking outputs, and distinguishing tested results from unconfirmed assumptions.')],
+].map(([title, body], i) => <div class="focus-item"><span class="mono">0{i + 1}</span><div><h3>{title}</h3><p>{body}</p></div></div>)}</div></section><aside class="about-card"><Icon name="patch" /><div class="brand-name">DB PATCH.</div><p>{t('每次排查、每段记录，都是一个小小的补丁。', 'Each investigation and each note adds a small patch.')}</p><div class="code-note">postgresql · backend · ai<br />https://db-patch.com</div></aside></div>
+  {(platforms.length > 0 || wechat) && <section class="platforms" id="platforms" aria-labelledby="platforms-title"><div class="section-head"><h2 id="platforms-title">{t('在其他地方找到我', 'Find me elsewhere')}</h2></div><div class="platform-grid">{groups.filter(group => platforms.some(p => p.group === group.id)).map(group => <section class="platform-card"><h3><Icon name={group.icon} />{group.title}</h3><div class="platform-list">{platforms.filter(p => p.group === group.id).map(p => <a href={p.url} target={p.url.startsWith('https:') ? '_blank' : undefined} rel="noopener noreferrer">{p.name}<Icon name="external" /></a>)}</div></section>)}{wechat && <section class="platform-card"><h3><Icon name="chat" />{t('微信公众号', 'WeChat Official Account')}</h3><p>{siteConfig.wechat.name}</p><img src={siteConfig.wechat.qrImage} alt={t(`${siteConfig.wechat.name} 公众号二维码`, `QR code for ${siteConfig.wechat.name}`)} width="220" height="220" loading="lazy" /></section>}</div></section>}
+  <p class="about-subscribe"><a class="text-link" href={pathFor(locale, 'subscribe')}><Icon name="rss" />{t('通过 RSS 接收新文章', 'Get new posts via RSS')}</a></p>
+</main>

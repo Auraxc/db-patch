@@ -1,0 +1,7 @@
+---
+import Icon from './Icon.astro';
+import type { Post } from '../lib/content';
+import { pathFor, tags, text, type Locale } from '../lib/i18n';
+const { locale, posts } = Astro.props as { locale: Locale; posts: Post[] };
+---
+<main id="main" class="wrap"><section class="page-intro"><div class="eyebrow">BROWSE BY TOPIC</div><h1>{text(locale, '按主题阅读', 'Read by topic')}</h1><p>{text(locale, '选择一个标签，浏览文章或订阅该主题。', 'Choose a tag to read its articles or subscribe to that topic.')}</p></section><section class="tag-directory" aria-label={text(locale, '所有标签', 'All tags')}>{tags.map(tag => <a class="topic-card" href={pathFor(locale, `tags/${tag.id}`)}><div class="topic-top"><Icon name={tag.icon} /><span>{String(posts.filter(p => p.data.tags.includes(tag.id)).length).padStart(2, '0')} {text(locale, '篇笔记', 'POSTS')}</span></div><h2>{tag[locale]}</h2><p>{locale === 'zh' ? tag.descriptionZh : tag.descriptionEn}</p></a>)}</section></main>
