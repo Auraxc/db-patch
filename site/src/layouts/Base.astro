@@ -31,6 +31,7 @@ const ld = article ? { '@context': 'https://schema.org', '@type': 'BlogPosting',
   <link rel="stylesheet" href="/styles/base.css" /><link rel="stylesheet" href="/styles/features.css" /><link rel="stylesheet" href="/styles/theme.css" /><link rel="stylesheet" href="/styles/site.css" />
   <script is:inline type="application/ld+json" set:html={JSON.stringify(ld).replace(/</g, '\\u003c')} />
   <script is:inline src="/scripts/site.js" defer></script>
+  <script is:inline src="/scripts/analytics.js" defer></script>
 </head>
 <body data-site={siteConfig.url} data-page={page}>
   <a class="skip" href="#main">{text(locale, '跳至正文', 'Skip to content')}</a>

@@ -1,0 +1,8 @@
+name = "db-patch"
+compatibility_date = "2026-09-09"
+pages_build_output_dir = "./site/dist"
+
+[[d1_databases]]
+binding = "ANALYTICS_DB"
+database_name = "db-patch-analytics"
+database_id = "579503bb-66d6-49bd-8763-8d9b8ab3deb8"
